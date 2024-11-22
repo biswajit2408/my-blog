@@ -1,154 +1,192 @@
 import { useState } from 'react';
-
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { alpha, useTheme } from '@mui/material/styles';
-import InputAdornment from '@mui/material/InputAdornment';
-
+import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'src/routes/hooks';
+import { Alert } from '@mui/lab';
+import { RouterLink } from '../../routes/components';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Navigate } from 'react-router-dom'; // Add Yup for validation
 
-import { bgGradient } from 'src/theme/css';
-
-import Logo from 'src/components/logo';
-import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
+// Define Yup validation schema
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Invalid email address')
+    .required('Email address is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
 
 export default function LoginView() {
   const theme = useTheme();
-
   const router = useRouter();
-
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const defaultValues = {
+    email: '',
+    password: '',
+  }
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues
+  });
+
+  const generateAuthToken = (length = 60) => {
+    const array = new Uint8Array(length);
+    window.crypto.getRandomValues(array);
+
+    return Array.from(array)
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
   };
 
-  const renderForm = (
-    <>
-      <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+  const resources = {
+    email: 'admin@example.com',
+    name: 'admin',
+  }
+  const onSubmit = (data) => {
+    const authToken = generateAuthToken(60);
+    if(data.email === 'admin@example.com' && data.password === 'admin@123'){
+      console.log(data.password)
+      const updatedResources = {
+        ...resources,
+        authToken: authToken, // Append the authToken
+      };
+      console.log(updatedResources);
+      localStorage.setItem('resources', JSON.stringify(updatedResources));
+      router.replace('/dashboard');
+    }else{
+      console.log('ddddddddd')
+      router.replace('/login');
+    }
 
-        <TextField
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
-
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
-      </Stack>
-
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={handleClick}
-      >
-        Login
-      </LoadingButton>
-    </>
-  );
+  };
 
   return (
-    <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
-        }),
-        height: 1,
-      }}
-    >
-      <Logo
-        sx={{
-          position: 'fixed',
-          top: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-        }}
-      />
-
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-        <Card
+    <>
+      <Stack
+        spacing={3}
+        flexDirection={{ xs: 'column', md: 'row' }}
+        justifyContent='space-between'
+      >
+        <Box
           sx={{
-            p: 5,
-            width: 1,
-            maxWidth: 420,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            backgroundColor: 'grey.200',
+            gap: '64px',
+            maxWidth: { xs: '100%', md: '40%' }
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
-
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              Get started
-            </Link>
-          </Typography>
-
-          <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
+          {/* Welcome Message */}
+          <Stack spacing={2}>
+            <Typography variant="h3">Hi, Welcome back</Typography>
+            <Typography variant="body1">More effectively with optimized workflows.</Typography>
           </Stack>
 
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
+          {/* Illustration (Dashboard image) */}
+          <Box sx={{ maxWidth: { xs: 300, md: 600 }, width: '100%', textAlign: 'center' }} spacing={5}>
+            <img
+              src="https://assets.minimals.cc/public/assets/illustrations/illustration-dashboard.webp"
+              alt="Dashboard illustration"
+              style={{ width: '100%', objectFit: 'cover' }}
+            />
+          </Box>
+        </Box>
 
-          {renderForm}
-        </Card>
+        <Box sx={{ padding: 4, width: '100%', maxWidth: { xs: '100%', md: '60%' } }} alignContent='center'>
+          <Box maxWidth={'sm'} m='auto'>
+            <Typography variant="h5" gutterBottom>
+              Sign in to your account
+            </Typography>
+
+            <Typography variant="body2">
+              Don’t have an account?{' '}
+              <Link component={RouterLink} to="" underline="hover">
+                Get started
+              </Link>
+            </Typography>
+
+            {/* Step 3: FormProvider & Form Handling */}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* Email Field */}
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Email address"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
+
+              {/* Forgot Password Link */}
+              <Box sx={{ textAlign: 'right', marginTop: 1 }}>
+                <Link href="#" variant="body2">
+                  Forgot password?
+                </Link>
+              </Box>
+
+              {/* Password Field */}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <Button
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? 'Hide' : 'Show'}
+                        </Button>
+                      ),
+                    }}
+                  />
+                )}
+              />
+
+              {/* Sign-in Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                size="large"
+                sx={{ marginTop: 3 }}
+                type="submit"
+              >
+                Sign in
+              </Button>
+            </form>
+          </Box>
+        </Box>
       </Stack>
-    </Box>
+    </>
   );
 }
