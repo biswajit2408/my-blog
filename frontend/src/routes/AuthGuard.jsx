@@ -2,10 +2,13 @@ import PropTypes from 'prop-types';
 import { Navigate } from 'react-router-dom';
 
 export default function AuthGuard({children}){
-    const isAuthenticated = !!localStorage.getItem('authToken');
+    const resources = JSON.parse(localStorage.getItem('resources'));
+    const isAuthenticated = !!resources && !!resources.authToken;
 
     if(!isAuthenticated){
-        return <Navigate to='/login' replace/>
+        console.log(resources)
+        console.log('ssssssss')
+        return <Navigate to='/login' replace />
     }
     return children;
 }

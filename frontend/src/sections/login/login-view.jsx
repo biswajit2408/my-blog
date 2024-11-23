@@ -12,7 +12,7 @@ import { RouterLink } from '../../routes/components';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Navigate } from 'react-router-dom'; // Add Yup for validation
+import {Navigate, useNavigate} from 'react-router-dom'; // Add Yup for validation
 
 // Define Yup validation schema
 const schema = yup.object().shape({
@@ -29,6 +29,7 @@ const schema = yup.object().shape({
 export default function LoginView() {
   const theme = useTheme();
   const router = useRouter();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const defaultValues = {
@@ -63,9 +64,8 @@ export default function LoginView() {
       };
       console.log(updatedResources);
       localStorage.setItem('resources', JSON.stringify(updatedResources));
-      router.replace('/dashboard');
+      navigate('/dashboard');
     }else{
-      console.log('ddddddddd')
       router.replace('/login');
     }
 

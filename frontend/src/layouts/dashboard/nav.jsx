@@ -28,6 +28,7 @@ import navConfig from './config-navigation';
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
 
+
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
