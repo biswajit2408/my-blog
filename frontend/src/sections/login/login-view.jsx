@@ -12,9 +12,10 @@ import { RouterLink } from '../../routes/components';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {Navigate, useNavigate} from 'react-router-dom'; // Add Yup for validation
+import {Navigate, useNavigate} from 'react-router-dom';
+import {useDispatch} from "react-redux";
+import {login} from "../../redux/slices/authSlice"; // Add Yup for validation
 
-// Define Yup validation schema
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -29,6 +30,7 @@ const schema = yup.object().shape({
 export default function LoginView() {
   const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -55,17 +57,18 @@ export default function LoginView() {
     name: 'admin',
   }
   const onSubmit = (data) => {
-    const authToken = generateAuthToken(60);
-    if(data.email === 'admin@example.com' && data.password === 'admin@123'){
-      console.log(data.password)
-      const updatedResources = {
-        ...resources,
-        authToken: authToken, // Append the authToken
-      };
-      console.log(updatedResources);
-      localStorage.setItem('resources', JSON.stringify(updatedResources));
+    const { email, password } = data;
+
+    if (email === 'admin@example.com' && password === 'admin@123') {
+      const authToken = generateAuthToken(60);
+      const user = { email, name: 'admin' };
+
+      dispatch(login({ authToken, user }));
+
+
       navigate('/dashboard');
-    }else{
+    } else {
+
       router.replace('/login');
     }
 

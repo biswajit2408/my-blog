@@ -1,9 +1,11 @@
-import { lazy, Suspense } from 'react';
+import {lazy, Suspense, useEffect} from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard'; // Ensure DashboardLayout exists and matches your file structure
 import AuthGuard from './AuthGuard'; // AuthGuard to protect dashboard routes
 import PATH from './path'; // Importing path.js for route paths
+import { useDispatch } from 'react-redux';
+import { logout } from 'src/redux/slices/authSlice';
 
 // Lazy load the components
 const LoginPage = lazy(() => import('src/pages/login'));
@@ -17,6 +19,14 @@ const UserPage = lazy(() => import('src/pages/user'));
 const Loader = () => <div>Loading...</div>;
 
 export default function MainRoutes() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('resources'));
+    if (!user) {
+      dispatch(logout());
+    }
+  }, []);
   const routes = useRoutes([
     {
       path: PATH.login,

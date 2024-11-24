@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../../../redux/slices/authSlice";
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +34,8 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+    const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -39,6 +43,10 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
+  };
+  const handleLogout = () => {
+    setOpen(null);
+      dispatch(logout());
   };
 
   return (
@@ -105,7 +113,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleLogout}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
