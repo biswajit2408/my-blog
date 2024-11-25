@@ -25,6 +25,7 @@ import navConfig from './config-navigation';
 import {AppContext} from "../../context/AppContext";
 import {Collapse} from "@mui/material";
 import List from "@mui/material/List";
+import Iconify from "../../components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -171,7 +172,7 @@ function NavItem({ item }) {
                     {item.icon}
                 </Box>
                 <Typography>{item.title}</Typography>
-                {item.children && (open ? <ExpandLess /> : <ExpandMore />)}
+                {item.children && (open ? <Iconify icon='ic:round-arrow-forward-ios' /> : <Iconify icon='eva:arrow-ios-downward-outline' />)}
             </ListItemButton>
 
             {item.children && (

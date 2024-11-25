@@ -16,16 +16,6 @@ const navConfig = [
     title: 'users',
     path: '/dashboard/user',
     icon: icon('ic_user'),
-    children: [ // Submenu items
-      {
-        title: 'List',
-        path: '/dashboard/user/list',
-      },
-      {
-        title: 'Create',
-        path: '/dashboard/user/add',
-      },
-    ],
   },
   {
     title: 'groups',

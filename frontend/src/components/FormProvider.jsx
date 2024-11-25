@@ -1,4 +1,4 @@
-// src/components/FormProvider.js
+// src/components/FormProvider.jsx
 
 import React from 'react';
 import { FormProvider as RHFormProvider } from 'react-hook-form';
