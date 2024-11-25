@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -22,12 +22,16 @@ import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
+import {AppContext} from "../../context/AppContext";
+import {Collapse} from "@mui/material";
+import List from "@mui/material/List";
 
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
-
+    const {resources} = useContext(AppContext);
+    const loggedUser = resources?.loggedUser;
 
   const upLg = useResponsive('up', 'lg');
 
@@ -54,10 +58,10 @@ export default function Nav({ openNav, onCloseNav }) {
       <Avatar src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{loggedUser?.name}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
+          {loggedUser?.email}
         </Typography>
       </Box>
     </Box>
@@ -137,40 +141,68 @@ Nav.propTypes = {
 // ----------------------------------------------------------------------
 
 function NavItem({ item }) {
-  const pathname = usePathname();
+    const pathname = usePathname();
+    const [open, setOpen] = useState(false);
 
-  const active = item.path === pathname;
+    const isActive = pathname === item.path;
 
-  return (
-    <ListItemButton
-      component={RouterLink}
-      href={item.path}
-      sx={{
-        minHeight: 44,
-        borderRadius: 0.75,
-        typography: 'body2',
-        color: 'text.secondary',
-        textTransform: 'capitalize',
-        fontWeight: 'fontWeightMedium',
-        ...(active && {
-          color: 'primary.main',
-          fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-          '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
-          },
-        }),
-      }}
-    >
-      <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-        {item.icon}
-      </Box>
+    const toggleOpen = () => {
+        setOpen(!open);
+    };
 
-      <Box component="span">{item.title} </Box>
-    </ListItemButton>
-  );
+    return (
+        <>
+            <ListItemButton
+                component={item.children ? 'button' : RouterLink}
+                href={item.path}
+                onClick={item.children ? toggleOpen : undefined}
+                sx={{
+                    typography: 'body2',
+                    color: 'text.secondary',
+                    borderRadius: 1,
+                    fontWeight: isActive ? 'fontWeightBold' : 'fontWeightMedium',
+                    bgcolor: isActive ? (theme) => alpha(theme.palette.primary.main, 0.1) : 'transparent',
+                    '&:hover': {
+                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                    },
+                }}
+            >
+                <Box component="span" sx={{ mr: 2 }}>
+                    {item.icon}
+                </Box>
+                <Typography>{item.title}</Typography>
+                {item.children && (open ? <ExpandLess /> : <ExpandMore />)}
+            </ListItemButton>
+
+            {item.children && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding sx={{ pl: 4 }}>
+                        {item.children.map((child) => (
+                            <ListItemButton
+                                key={child.title}
+                                component={RouterLink}
+                                href={child.path}
+                                sx={{
+                                    typography: 'body2',
+                                    color: 'text.secondary',
+                                    borderRadius: 1,
+                                    fontWeight: pathname === child.path ? 'fontWeightBold' : 'fontWeightMedium',
+                                    '&:hover': {
+                                        backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                                    },
+                                }}
+                            >
+                                {child.title}
+                            </ListItemButton>
+                        ))}
+                    </List>
+                </Collapse>
+            )}
+        </>
+    );
 }
 
 NavItem.propTypes = {
-  item: PropTypes.object,
+    item: PropTypes.object.isRequired,
 };
+

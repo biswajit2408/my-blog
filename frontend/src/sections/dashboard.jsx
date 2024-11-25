@@ -19,16 +19,17 @@ import {useContext} from "react";
 
 export default function Dashboard() {
 
-
+    const { resources } = useContext(AppContext);
+    const loggedUser = resources?.loggedUser;
 
     return (
         <Container maxWidth="xl">
             <Typography variant="h4" sx={{ mb: 5 }}>
-                Hi, Welcome back 👋
+                Hi {loggedUser?.name}, Welcome back 👋
             </Typography>
 
             <Grid container spacing={3}>
-                <Grid xs={12} sm={6} md={3}>
+                <Grid xs={12} sm={6} md={4}>
                     <AppWidgetSummary
                         title="Weekly Sales"
                         total={714000}
@@ -37,7 +38,7 @@ export default function Dashboard() {
                     />
                 </Grid>
 
-                <Grid xs={12} sm={6} md={3}>
+                <Grid xs={12} sm={6} md={4}>
                     <AppWidgetSummary
                         title="New Users"
                         total={1352831}
@@ -46,7 +47,7 @@ export default function Dashboard() {
                     />
                 </Grid>
 
-                <Grid xs={12} sm={6} md={3}>
+                <Grid xs={12} sm={6} md={4}>
                     <AppWidgetSummary
                         title="Item Orders"
                         total={1723315}
@@ -55,14 +56,6 @@ export default function Dashboard() {
                     />
                 </Grid>
 
-                <Grid xs={12} sm={6} md={3}>
-                    <AppWidgetSummary
-                        title="Bug Reports"
-                        total={234}
-                        color="error"
-                        icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
-                    />
-                </Grid>
             </Grid>
         </Container>
     );

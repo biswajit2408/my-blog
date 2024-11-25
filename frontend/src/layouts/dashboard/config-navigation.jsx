@@ -9,18 +9,33 @@ const icon = (name) => (
 const navConfig = [
   {
     title: 'dashboard',
-    path: '/',
+    path: '/dashboard',
     icon: icon('ic_analytics'),
   },
   {
-    title: 'user',
-    path: '/user',
+    title: 'users',
+    path: '/dashboard/user',
     icon: icon('ic_user'),
+    children: [ // Submenu items
+      {
+        title: 'List',
+        path: '/dashboard/user/list',
+      },
+      {
+        title: 'Create',
+        path: '/dashboard/user/add',
+      },
+    ],
+  },
+  {
+    title: 'groups',
+    path: '/dashboard/group',
+    icon: icon('ic_group'),
   },
   {
     title: 'permissions and roles',
     path: '/products',
-    icon: icon('ic_cart'),
+    icon: icon('ic_permissions'),
   }
 ];
 

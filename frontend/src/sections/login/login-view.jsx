@@ -61,9 +61,9 @@ export default function LoginView() {
 
     if (email === 'admin@example.com' && password === 'admin@123') {
       const authToken = generateAuthToken(60);
-      const user = { email, name: 'admin' };
+      const loggedUser = { email, name: 'Admin' };
 
-      dispatch(login({ authToken, user }));
+      dispatch(login({ authToken, loggedUser }));
 
 
       navigate('/dashboard');

@@ -4,8 +4,8 @@ const initialState = {
     authToken: localStorage.getItem('resources')
         ? JSON.parse(localStorage.getItem('resources')).authToken
         : null,
-    user: localStorage.getItem('resources')
-        ? JSON.parse(localStorage.getItem('resources')).user
+    loggedUser: localStorage.getItem('resources')
+        ? JSON.parse(localStorage.getItem('resources')).loggedUser
         : null,
 };
 
@@ -14,16 +14,16 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         login: (state, action) => {
-            const { authToken, user } = action.payload;
+            const { authToken, loggedUser } = action.payload;
             state.authToken = authToken;
-            state.user = user;
+            state.loggedUser = loggedUser;
 
             // Sync to localStorage
-            localStorage.setItem('resources', JSON.stringify({ authToken, user }));
+            localStorage.setItem('resources', JSON.stringify({ authToken, loggedUser }));
         },
         logout: (state) => {
             state.authToken = null;
-            state.user = null;
+            state.loggedUser = null;
 
             // Clear localStorage
             localStorage.removeItem('resources');

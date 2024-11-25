@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -12,13 +12,16 @@ import IconButton from '@mui/material/IconButton';
 import { account } from 'src/_mock/account';
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../../redux/slices/authSlice";
+import {AppContext} from "../../../context/AppContext";
+import {useRouter} from "../../../routes/hooks";
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    icon: 'eva:home-fill',
+      label: 'Home',
+      icon: 'eva:home-fill',
+      url: '/dashboard'
   },
   {
     label: 'Profile',
@@ -30,18 +33,30 @@ const MENU_OPTIONS = [
   },
 ];
 
+
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-    const user = useSelector((state) => state.auth.user);
-    const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
+  const router = useRouter();
+
+  const {resources} = useContext(AppContext);
+  const loggedUser = resources?.loggedUser;
+
+
+  const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
+    const handleGoTo = () => {
+        router
+    }
+
+    const handleClose = () => {
     setOpen(null);
   };
   const handleLogout = () => {
@@ -65,14 +80,14 @@ export default function AccountPopover() {
       >
         <Avatar
           src={account.photoURL}
-          alt={account.displayName}
+          alt={loggedUser?.name}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {account.displayName.charAt(0).toUpperCase()}
+          {loggedUser?.name.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -93,10 +108,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {loggedUser?.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {loggedUser?.email}
           </Typography>
         </Box>
 
